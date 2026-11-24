@@ -13,6 +13,11 @@ import { hydrateSite } from "./site";
 import { hydrateTopics } from "./topics";
 
 const CMS = (process.env.CMS_API_URL ?? "http://localhost:4000").replace(/\/$/, "");
+// Live, photo addresses point at the storage bucket; they are shown through this site's /media/ path instead
+// (see next.config.mjs), so visitors never load them from the storage host itself.
+const IMAGES = (process.env.IMAGES_URL ?? "").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
+const viaSite = (snap) => (IMAGES && SITE_URL ? JSON.parse(JSON.stringify(snap).replaceAll(`${IMAGES}/`, `${SITE_URL}/media/`)) : snap);
 
 async function loadSnapshot() {
   "use cache";
@@ -20,14 +25,14 @@ async function loadSnapshot() {
   try {
     const res = await fetch(`${CMS}/api/public/snapshot`, { signal: AbortSignal.timeout(30000) });
     if (!res.ok) throw new Error(`CMS answered ${res.status}`);
-    const live = await res.json();
+    const live = viaSite(await res.json());
     cacheLife("max"); // kept until the CMS says something changed
     return live;
   } catch {
     // The CMS is down or restarting: the saved copy stands in only briefly, so the live content (new photos,
     // 360 views) comes back by itself as soon as the CMS answers again, instead of the old copy staying for good.
     cacheLife("seconds");
-    return saved;
+    return viaSite(saved);
   }
 }
 

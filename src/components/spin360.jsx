@@ -102,7 +102,7 @@ export function Spin360({ view, name, tabs = null }) {
       }
     };
     // Live, frames come from the storage bucket, which allows reading pixels (CORS); locally, through the image service.
-    const direct = view.frames[0].includes("/storage/v1/object/public/");
+    const direct = view.frames[0].includes("/storage/v1/object/public/") || view.frames[0].includes("/media/");
     if (direct) probe.crossOrigin = "anonymous";
     probe.src = direct ? view.frames[0] : `/_next/image?url=${encodeURIComponent(view.frames[0])}&w=96&q=70`;
   }, [view]);

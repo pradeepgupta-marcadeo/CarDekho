@@ -29,6 +29,11 @@ const nextConfig = {
     // Only for local development, where the CMS runs on this machine. A live CMS has a public address.
     dangerouslyAllowLocalIP: cmsIsLocal,
   },
+  // Live photos are served from this site's own address (/media/...), fetched from the storage bucket behind the
+  // scenes, so a visitor's network never has to reach the storage host (some Indian ISPs block supabase.co).
+  async rewrites() {
+    return store ? [{ source: "/media/:path*", destination: `${store.href.replace(/\/$/, "")}/:path*` }] : [];
+  },
   async redirects() {
     return [
       // Offers were removed (no offer data from the source): old addresses go to the closest page.
