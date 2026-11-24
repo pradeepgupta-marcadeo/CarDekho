@@ -14,6 +14,9 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   images: {
+    // Live, photos come straight from the storage bucket (already compressed): Vercel's free plan allows only a
+    // few thousand resizes a month, far fewer than the site's photos, so they are not resized again.
+    unoptimized: Boolean(store),
     formats: ["image/avif", "image/webp"],
     qualities: [70, 80],
     deviceSizes: [640, 828, 1080, 1280, 1600, 1920],

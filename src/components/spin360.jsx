@@ -101,7 +101,10 @@ export function Spin360({ view, name, tabs = null }) {
         // the default studio grey stays
       }
     };
-    probe.src = `/_next/image?url=${encodeURIComponent(view.frames[0])}&w=96&q=70`;
+    // Live, frames come from the storage bucket, which allows reading pixels (CORS); locally, through the image service.
+    const direct = view.frames[0].includes("/storage/v1/object/public/");
+    if (direct) probe.crossOrigin = "anonymous";
+    probe.src = direct ? view.frames[0] : `/_next/image?url=${encodeURIComponent(view.frames[0])}&w=96&q=70`;
   }, [view]);
 
   // Load every frame, coarse ones first.
