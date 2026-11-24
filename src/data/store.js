@@ -18,7 +18,7 @@ async function loadSnapshot() {
   "use cache";
   cacheTag("cms");
   try {
-    const res = await fetch(`${CMS}/api/public/snapshot`, { signal: AbortSignal.timeout(8000) });
+    const res = await fetch(`${CMS}/api/public/snapshot`, { signal: AbortSignal.timeout(30000) });
     if (!res.ok) throw new Error(`CMS answered ${res.status}`);
     const live = await res.json();
     cacheLife("max"); // kept until the CMS says something changed
