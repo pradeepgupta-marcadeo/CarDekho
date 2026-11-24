@@ -1,0 +1,11 @@
+# Wheelora
+
+> Design prototype of a car research website for India. All prices, reviews and dealers are demo data.
+
+## Main sections
+
+- [New cars](/new-cars): filter the catalogue by budget, body type, fuel and seats
+- [Compare cars](/compare-cars): side-by-side specifications
+- [Car news](/news): demo editorial stories
+- [EMI calculator](/emi-calculator): illustrative loan estimates
+- [Image credits](/image-credits): photo authors and licences
