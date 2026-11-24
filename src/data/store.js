@@ -18,6 +18,8 @@ const CMS = (process.env.CMS_API_URL ?? "http://localhost:4000").replace(/\/$/, 
 const IMAGES = (process.env.IMAGES_URL ?? "").replace(/\/$/, "");
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
 const viaSite = (snap) => (IMAGES && SITE_URL ? JSON.parse(JSON.stringify(snap).replaceAll(`${IMAGES}/`, `${SITE_URL}/media/`)) : snap);
+// The saved copy (used by the build and when the CMS is down), with the same photo addresses as live content.
+const SAVED = viaSite(saved);
 
 async function loadSnapshot() {
   "use cache";
@@ -32,12 +34,12 @@ async function loadSnapshot() {
     // The CMS is down or restarting: the saved copy stands in only briefly, so the live content (new photos,
     // 360 views) comes back by itself as soon as the CMS answers again, instead of the old copy staying for good.
     cacheLife("seconds");
-    return viaSite(saved);
+    return SAVED;
   }
 }
 
 let applied = "";
-let current = saved;
+let current = SAVED;
 
 function apply(s) {
   hydrateSite({ site: s.site, cities: s.cities, nav: s.nav, footer: s.footer, blocks: s.blocks });
@@ -63,7 +65,7 @@ export async function ready() {
   // to the "cms" tag, so the CMS refresh (revalidateTag) re-renders it with fresh content afterwards.
   if (process.env.NEXT_PHASE === "phase-production-build") {
     await cmsTag();
-    const s = saved;
+    const s = SAVED;
     if (s.version !== applied) apply(s);
     return;
   }
